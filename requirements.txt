@@ -1,7 +1,23 @@
+# Core Dependencies
 langchain
 langchain-openai
 openai
 python-dotenv
 requests
 beautifulsoup4
-gradio
+streamlit
+pypandoc
+
+# Notion API
+notion-client
+
+# Testing
+pytest
+pytest-cov
+pytest-mock
+codecov
+
+# Development
+black
+flake8
+mypy

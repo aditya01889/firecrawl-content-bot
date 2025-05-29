@@ -1,53 +1,87 @@
-🔥 Firecrawl Agent
-Firecrawl Agent is an autonomous content creation pipeline built for developers and startups using Firecrawl, LLMs, and Notion. It ideates trending topics, generates SEO-rich blog content, validates tone, publishes to Notion, and tracks performance — all automatically.
+# 🔥 Firecrawl Content Bot
 
-🚀 What It Does
-Ideation: Scans Hacker News, Reddit, and Dev.to for trending dev topics
+An autonomous content creation pipeline that generates developer-focused blog posts, enhances them for SEO, and publishes to Notion with proper formatting.
 
-Content Generation: Uses LLMs to generate developer-focused blog posts
+## 🚀 Features
 
-SEO Enhancement: Adds keyword richness, headers, meta descriptions
+- **Topic Ideation**: Finds trending developer topics
+- **Content Generation**: Creates high-quality technical blog posts
+- **SEO Enhancement**: Optimizes content with relevant keywords and metadata
+- **Style Validation**: Ensures consistent, developer-friendly formatting
+- **Notion Publishing**: Seamlessly publishes to Notion with proper formatting
+- **Performance Tracking**: Monitors post performance (views, engagement)
 
-Style Validation: Enforces developer tone and clarity with markdown formatting
+## 🧱 Project Structure
 
-Publishing: Pushes the final blog to Notion via API
-
-Analytics: Uses Firecrawl to evaluate published content performance
-
-Refinement: Lays groundwork for feedback-based content improvement
-
-🧱 Project Structure
-
-firecrawl_agent/
-├── blog_agent.py         # Orchestrator: runs the whole pipeline
+```
+firecrawl-content-bot/
 ├── blog_generator.py     # Generates blog content using LLM
-├── seo_enhancer.py       # Adds SEO improvements
-├── style_validator.py    # Fixes tone, formatting for dev-readers
-├── topic_ideator.py      # Fetches trending topics (HN, Reddit, Dev.to)
-├── notion_publisher.py   # Publishes final post to Notion
-├── analytics_tracker.py  # Uses Firecrawl to analyze published blog
-├── prompt_template.py    # Reusable LLM prompt templates (WIP)
-├── utils.py              # Logging, file saving, helpers
-└── .env                  # API keys (OpenRouter, Firecrawl, Notion, etc.)
+├── seo_enhancer.py       # Enhances content for SEO
+├── style_validator.py    # Validates and fixes style
+├── notion_publisher.py   # Publishes to Notion with formatting
+├── analytics_tracker.py  # Tracks post performance
+├── config.py            # Configuration and settings
+├── requirements.txt     # Python dependencies
+├── .env.example        # Example environment variables
+└── README.md           # This file
+```
 
-🛠️ Setup Instructions
-Clone the repo
+## 🛠️ Setup Instructions
 
-git clone https://github.com/yourname/firecrawl_agent.git
-cd firecrawl_agent
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/aditya01889/firecrawl-content-bot.git
+   cd firecrawl-content-bot
+   ```
 
-Install dependencies
+2. **Set up a virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-pip install -r requirements.txt
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Configure environment variables
-Create a .env file with the following:
+4. **Configure environment variables**
+   - Copy `.env.example` to `.env`
+   - Update with your API keys:
+     ```
+     OPENROUTER_API_KEY=your_openrouter_key
+     FIRECRAWL_API_KEY=your_firecrawl_key
+     NOTION_API_KEY=your_notion_api_key
+     NOTION_DATABASE_ID=your_notion_database_id
+     ```
 
-OPENROUTER_API_KEY=your_openrouter_key
-FIRECRAWL_API_KEY=your_firecrawl_key
-NOTION_API_KEY=your_notion_integration_key
+5. **Run the application**
+   ```bash
+   streamlit run ui.py
+   ```
 
-Run the agent
+## 🔧 Usage
+
+1. Launch the Streamlit UI
+2. Enter a topic or use the "Fetch Trending Topics" button
+3. Click "Generate Blog" to create content
+4. Use "Enhance SEO" to optimize the content
+5. Click "Publish to Notion" to publish the final version
+6. Check analytics with the "Check Analytics" button
+
+## 🛡️ Security Note
+
+- Never commit your `.env` file to version control
+- The `.gitignore` is pre-configured to exclude sensitive files
+- Rotate your API keys if they are accidentally exposed
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 python blog_agent.py
 
