@@ -1,13 +1,14 @@
 from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 import os
+from config import OPENROUTER_API_KEY, BASE_URL, MODEL_NAME
 
 load_dotenv()
 
 llm = ChatOpenAI(
-    model="openai/gpt-3.5-turbo",
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url="https://openrouter.ai/api/v1",
+    model=MODEL_NAME,
+    api_key=OPENROUTER_API_KEY,
+    base_url=BASE_URL
 )
 
 def validate_style(markdown: str) -> str:

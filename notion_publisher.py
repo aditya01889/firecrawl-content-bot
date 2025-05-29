@@ -1,10 +1,10 @@
 import os
 import requests
 from dotenv import load_dotenv
+from config import NOTION_API_KEY, NOTION_DATABASE_ID
 
 load_dotenv()
-NOTION_API_KEY = os.getenv("NOTION_API_KEY")
-NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+
 
 def split_content_to_blocks(content: str):
     paragraphs = content.split('\n\n')

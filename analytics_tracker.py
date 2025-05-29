@@ -2,10 +2,9 @@ import os
 import requests
 import time
 from dotenv import load_dotenv
+from config import FIRECRAWL_API_KEY
 
 load_dotenv()
-
-FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
 
 def track_post_performance(topic: str, url: str):
     print(f"📊 Fetching real analytics for: {topic}")
