@@ -8,76 +8,70 @@ load_dotenv()
 
 def parse_markdown_to_rich_text(text: str):
     """Parse markdown text into Notion rich text format with formatting."""
+    # Don't process empty text
+    if not text.strip():
+        return [{"type": "text", "text": {"content": text}}]
+        
     rich_text = []
     i = 0
     n = len(text)
+    current_text = ""
     
     while i < n:
-        # Handle code blocks (```)
-        if text.startswith('```', i):
-            # End of current text if any
-            if i > 0 and rich_text and rich_text[-1].get('text', {}).get('content'):
-                rich_text[-1]['text']['content'] = rich_text[-1]['text']['content'].rstrip()
-            
-            # Find end of code block
-            end = text.find('```', i + 3)
-            if end == -1:  # Unclosed code block
-                code = text[i+3:].strip()
-                i = n
-            else:
-                code = text[i+3:end].strip()
-                i = end + 3
-                
-            # Add code block
-            return [
-                {
+        # Skip code block markers (handled in split_content_to_blocks)
+        if text.startswith('```', i) and (i == 0 or text[i-1] == '\n'):
+            # Add any accumulated text
+            if current_text:
+                rich_text.append({
                     "type": "text",
-                    "text": {
-                        "content": code
-                    },
-                    "annotations": {
-                        "code": True
-                    }
-                }
-            ]
+                    "text": {"content": current_text}
+                })
+                current_text = ""
+            i += 3
+            continue
             
         # Handle inline code (`)
-        elif text[i] == '`':
-            # End of current text if any
-            if i > 0 and rich_text and rich_text[-1].get('text', {}).get('content'):
-                rich_text[-1]['text']['content'] = rich_text[-1]['text']['content'].rstrip()
+        if text[i] == '`' and (i == 0 or text[i-1] != '`'):
+            # Add any accumulated text
+            if current_text:
+                rich_text.append({
+                    "type": "text",
+                    "text": {"content": current_text}
+                })
+                current_text = ""
             
             # Find end of inline code
             end = text.find('`', i + 1)
             if end == -1:  # Unclosed inline code
-                code = text[i+1:].strip()
+                code = text[i+1:]
                 i = n
             else:
-                code = text[i+1:end].strip()
+                code = text[i+1:end]
                 i = end + 1
-                
-            # Add inline code
-            rich_text.append({
-                "type": "text",
-                "text": {
-                    "content": code
-                },
-                "annotations": {
-                    "code": True
-                }
-            })
             
-        else:
-            # Add regular text
-            if not rich_text or not rich_text[-1].get('text', {}).get('content'):
+            # Add inline code
+            if code.strip():
                 rich_text.append({
                     "type": "text",
-                    "text": {
-                        "content": ""
-                    }
+                    "text": {"content": code},
+                    "annotations": {"code": True}
                 })
-            rich_text[-1]['text']['content'] += text[i]
-            i += 1
+            continue
+            
+        # Add character to current text
+        current_text += text[i]
+        i += 1
+    
+    # Add any remaining text
+    if current_text:
+        rich_text.append({
+            "type": "text",
+            "text": {"content": current_text}
+        })
+    
+    # If we didn't add any rich text, return a simple text node
+    if not rich_text:
+        return [{"type": "text", "text": {"content": text}}]
     
     return rich_text
 
@@ -98,19 +92,25 @@ def split_content_to_blocks(content: str):
         if para.startswith('```'):
             if in_code_block:
                 # End of code block
-                code_content = '\n'.join(current_code_block)
+                code_content = '\n'.join(current_code_block[1:])  # Skip the language line
+                language = current_code_block[0].strip() if current_code_block and '```' not in current_code_block[0] else 'plain text'
+                if not language or language == '``':
+                    language = 'plain text'
                 blocks.append({
                     "object": "block",
                     "type": "code",
                     "code": {
                         "rich_text": [{"type": "text", "text": {"content": code_content}}],
-                        "language": "plain text"
+                        "language": language.lower()
                     }
                 })
                 in_code_block = False
                 current_code_block = []
             else:
-                # Start of code block
+                # Start of code block - check for language
+                language = para[3:].strip()  # Get language if specified
+                if language:  # If language is specified (e.g., ```python)
+                    current_code_block.append(language)  # Store language as first line
                 in_code_block = True
                 continue
         elif in_code_block:
